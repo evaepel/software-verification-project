@@ -1,0 +1,73 @@
+create table users(user_id primary-key, name, surname, email_address)
+create table posts(user_id, post_id primary-key)
+create table followers(user_followed primary-key, user_follower primary-key, age)
+
+*The following insert must succeed
+insert into users values (user1, eva, epelbaum, eva_mail)
+insert into users values (user2, raissa, nataf, raissa_mail)
+insert into users values (user3, name3, surname3, mail3)
+insert into users values (user4, name4, surname4, mail4)
+
+insert into posts values(user1,post1)
+insert into posts values(user1,post2)
+insert into posts values(user1,post3)
+insert into posts values(user1,post4)
+insert into posts values(user1,post5)
+
+insert into followers values( user1_followed,user2_follower, 12)
+insert into followers values( user1_followed,user1_follower, 13)
+insert into followers values( user1_followed,user3_follower, 14)
+***********************************************************************************
+
+*the following inserts must fail because twice same key
+insert into followers values( user1_followed,user2_follower, 15)
+insert into followers values( user1_followed,user3_follower, 16)
+***********************************************************************************
+
+*the following insert must fail columns are missing
+insert into followers values( user2_followed,user4_follower)
+***********************************************************************************
+
+*the following selects must succeed
+select * from users
+select * from posts
+select * from followers
+
+select surname name from users
+select post_id from posts
+select user_follower from followers
+***********************************************************************************
+
+*these followings update must succeed
+update followers set age = 10 where user_followed = user1_followed
+update followers set age = 8 where user_follower = user3_follower
+update followers set age = 90 where user_followed = user1_followed
+update followers set age = 90 where user_follower = user2_follower
+update followers set age = 91 where user_follower = user3_follower
+***********************************************************************************
+
+*these followings update doesn't change the table because the condition is not verified
+update followers set age = 43 where user_followed = user2_followed
+update followers set age = 100 where user_followed = user4_follower
+**********************************************************************************************
+
+*these 2 followings update must fail because we try to update a key field
+update followers set user_followed = user1_followed where age = 10
+update followers set user_follower = user1_follower where age = 10
+***************************************************************************************
+
+*the following selects must succeed
+select * from users
+select * from posts
+select * from followers
+***************************************************************************************
+
+*SYNTAX ERROR:
+create users(user_id primary-key, name, surname, email_address)
+create table (user_id primary-key, name, surname, email_address)
+select * post_id from posts
+***********************************************************************************
+
+*must fail because table doesn't exist
+select * from table_does_not_exist
+***********************************************************************************
