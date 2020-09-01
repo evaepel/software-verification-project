@@ -68,12 +68,12 @@ sassert(strlen2(statement->values_to_insert.name[j])>0);
 
 ### Create
 
-In order to ensure we do not overwrite on an existing table when adding a new table to our DB we used  global ghost variables:
+In order to ensure we do not overwrite an existing table when adding a new table to our DB we used  global ghost variables:
 
 ```bash
 static int8_t* g_bgn;         // Points to the beginning of the buffer of arbitrary table.
 static int8_t* g_end;         // Points to the end of the buffer of this arbitrary table.
-static bool g_active;         // If g_bgn and g_end points to the beginning and end of the buffer of the table. true only for one table.  
+static bool g_active;         // True if g_bgn and g_end points to the beginning and end of the buffer of the table. Will be turned on only once so that we "save" the address of                               // only one Table.  
 ```
 Plus, in order to compare the addresses of the different existing tables to the arbitrary one which g_bgn and g_end point on, we added a boolean: table_saved in the struct of the tables that we turn on when keeping the addresses. Here is the code:
 ```bash
@@ -83,7 +83,7 @@ typedef struct {...
 
 Table* new_table(char* name, int row_size, int num_cols){...
     table->saved = false;
-    if (!g_active && nd()) {//g_active == 0 and nd()!=0
+    if (!g_active && nd()) {//g_active == 0 and nd()!=0f
         g_active = !g_active;   //g_active = 1
         table->saved = true;
         assume((int8_t*)table == g_bgn);
@@ -93,21 +93,18 @@ Table* new_table(char* name, int row_size, int num_cols){...
 ```
 In the main we check in a for loop the following:
 
-If g_active is true  and the current table is not the one we saved the buffer we check the current table doesn't overwrite the on we saved.      
+If g_active is true  and the current table is not the one we saved the buffer of, we check the current table doesn't overwrite the one we saved.      
 The verification is done on five tables.
 
 
 ```bash
-DataBase *dataBase = new_data_base(0);
-
-dataBase->Tables[0] = new_table("first","first", 2*CELL_SIZE, 1, 2, NULL);
+    DataBase *dataBase  = new_data_base(0);
+    dataBase->Tables[0] = new_table("first","first", 2*CELL_SIZE, 1, 2, NULL);
     dataBase->Tables[1] = new_table("second","second", 4*CELL_SIZE,1, 4, NULL);
     dataBase->Tables[2] = new_table("third","third", 2*CELL_SIZE,1, 2, NULL);
     dataBase->Tables[3] = new_table("fourth","fourth", 3*CELL_SIZE,1, 3, NULL);
     dataBase->Tables[4] = new_table("fifth","fifth", 8*CELL_SIZE,1, 8, NULL);
     dataBase->num_table = 5;
-
-dataBase->num_table = 5;
 
 for (int i = 0; i < dataBase->num_table; i++) {
     Table *table = dataBase->Tables[i];
@@ -118,10 +115,10 @@ for (int i = 0; i < dataBase->num_table; i++) {
 ```
 
 ### Insert
-In the insert query we do the basic verification we mentioned above but we didn't succeed to add more verification.
+In the insert query we do the basic verification we mentioned above but we didn't add more verification.
 
-We wanted to check with ghost variables that the address which we insert data in is located inside the required line and does not exceed from its bounds.
-We didn't  succeed because
+Indeed, We wanted to check with ghost variables that the address which we insert data in is located inside the required line and does not exceed from its bounds.
+However, after adding the relevant functions SeaHorn didn't handle this verification (didn't return sat nor unsat but was blocked). We then keep only the query verification.
 
 
 ### Select
@@ -138,7 +135,7 @@ while(i<MAX_COLS && i<destination->values_to_select.size ){
 
 ### Update
 
-When updating some cell in a row, we need to make sure we do not exceed from the row bounds. We check it in a similar way as the select verification:
+When updating some cell in a row, we need to make sure we do not exceed from the row bounds. We check it in a similar way as in the select verification:
 ```bash
  while (i < MAX_COLS && cols_to_update[i] != -1) {
        assume(g_end == cursor_value(cursor)+table->row_size);
@@ -148,15 +145,6 @@ When updating some cell in a row, we need to make sure we do not exceed from the
        }
 ```
 
-## differences
-new statement - no close because there is no file
-
-main_create:
-
-execute_create function is not in the sea-horn because we call it in the main we call the new table - to make it  more simple
-
-main_insert - we may change the signature of excecute insert
-we do no succeed because the seahorn cannot support to have a pointer to an object, pass it from function to function and rememeber all of the struct
 
 ## What we took from the project
 
@@ -169,4 +157,4 @@ The SeaHorn tool was new for both of us and the fact that it generated counter-e
 One thing we especially appreciated is the use of non deterministic values in order to cover every possible case, thing we cannot do with simple tests.
 
 
-Finally we really want to thank Shahar and Yakir for the support, invest and availability during all the semester and the summer. 
+Finally we really want to thank Shachar and Yakir for the support, invest and availability during all the semester and the summer. 
