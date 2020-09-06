@@ -82,20 +82,16 @@ typedef struct {
 
 typedef struct {
     StatementType type;
-    Table* table_to_insert;
+    Table *table_to_insert;
     Table *table_from_select;
     Table *table_to_update;
     Table *table_to_create;
-    Table *table_to_delete;
-    Table *table_left_join;
-    Table *table_right_join;
     Value values_to_insert;
     Value values_to_select;
     Value values_for_update;
+    Value values_to_compare;
     ColNames columns_to_update;
-    bool saved;
-    void* dest;
-
+    ColNames columns_to_compare;
 } Statement;
 void* xmalloc(size_t size){
     sassert(size <= 4096);
