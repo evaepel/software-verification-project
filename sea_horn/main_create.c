@@ -290,25 +290,25 @@ int main(int argc, char *argv[]) {
 
     char word1[MAX_SIZE] = "table";
     sassert(strlen2(word1) > 0);
-    command[0] = (char *) xmalloc(strlen2(word1) + 1);
+    command[1] = (char *) xmalloc(strlen2(word1) + 1);
     strcpy2(command[1], word1);
     sassert(strlen2(command[1]) > 0);
 
     char word2[MAX_SIZE] = "first";
     sassert(strlen2(word2) > 0);
-    command[0] = (char *) xmalloc(strlen2(word2) + 1);
+    command[2] = (char *) xmalloc(strlen2(word2) + 1);
     strcpy2(command[2], word2);
     sassert(strlen2(command[2]) > 0);
 
     char word3[MAX_SIZE] = "col1";
     sassert(strlen2(word3) > 0);
-    command[0] = (char *) xmalloc(strlen2(word3) + 1);
+    command[3] = (char *) xmalloc(strlen2(word3) + 1);
     strcpy2(command[3], word3);
     sassert(strlen2(command[3]) > 0);
 
     char word4[MAX_SIZE] = "col2";
     sassert(strlen2(word4) > 0);
-    command[0] = (char *) xmalloc(strlen2(word4) + 1);
+    command[4] = (char *) xmalloc(strlen2(word4) + 1);
     strcpy2(command[4], word4);
     sassert(strlen2(command[4]) > 0);
 
