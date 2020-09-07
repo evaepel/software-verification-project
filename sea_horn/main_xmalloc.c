@@ -110,9 +110,10 @@ void* xmalloc(size_t size){
 
 int main(int argc, char* argv[]){
     xmalloc(128);
-    int i = nd();
-    assume(i==1);
-    Pager* p = (Pager*)xmalloc(sizeof(Pager)*i);
+    //int i = nd();
+    //assume(i==1);
+    //Pager* p = (Pager*)xmalloc(sizeof(Pager)*i);
+    Pager* p = (Pager*)xmalloc(sizeof(Pager));
     Table* table = (Table*)xmalloc(sizeof(Table));
     NodeBodyLayout* nbl = (NodeBodyLayout*)xmalloc(sizeof(NodeBodyLayout));
     Cursor* cursor = xmalloc(sizeof(Cursor));
