@@ -49,7 +49,9 @@ assume(((ptrdiff_t)p) > 0);
 ```
 
 In main_malloc.c we checked the xmalloc function with typical objects we use in our database.
+```bash
 sea pf -O0 -g -m64 main_xmalloc.c --inline --log=cex --cex=out.ll
+```
 ### Query verification
 
 Queries represent the only entry point to the program. Thus, asserting good behavior at the query level represents a 2-fold benefit. First off, it validates parsing and string treatment (which is known to be delicate in C). Second, as the entry point of our program, making assertion on query result allows us to create many assumption rules later in the flow. Therefore, we check the SQL command contains valid values, especially no empty strings.
@@ -113,13 +115,17 @@ for (int i = 0; i < dataBase->num_table; i++) {
     }
 }
 ```
+```bash
 sea pf -O0 -g -m64 main_create.c --inline --log=cex --cex=out.ll
+```
 ### Insert
 In the insert query we do the basic verification we mentioned above but we didn't add more verification.
 
 Indeed, We wanted to check with ghost variables that the address which we insert data in is located inside the required line and does not exceed from its bounds.
 However, after adding the relevant functions SeaHorn didn't handle this verification (didn't return sat nor unsat but was blocked). We then keep only the query verification.
+```bash
 sea pf -O0 -g -m64 main_insert.c --inline --log=cex --cex=out.ll
+```
 
 ### Select
 We ensure when accessing the rows in the DB we do not exceed from the row bounds when extracting the data 
@@ -132,7 +138,9 @@ while(i<MAX_COLS && i<destination->values_to_select.size ){
     i++;
     }
 ```
+```bash
 sea pf -O0 -g -m64 main_select.c --inline --log=cex --cex=out.ll
+```
 ### Update
 
 When updating some cell in a row, we need to make sure we do not exceed from the row bounds. We check it in a similar way as in the select verification:
@@ -144,7 +152,9 @@ When updating some cell in a row, we need to make sure we do not exceed from the
        i++;
        }
 ```
+```bash
 sea pf -O0 -g -m64 main_update.c --inline --log=cex --cex=out.ll
+```
 
 ## What we took from the project
 
